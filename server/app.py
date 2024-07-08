@@ -1,4 +1,5 @@
 from flask import Flask, json, request, jsonify
+from collections import OrderedDict
 
 app = Flask(__name__)
 
@@ -6,7 +7,7 @@ app = Flask(__name__)
 @app.route('/upload', methods=['POST'])
 def upload_data():
     data = request.json
-    formFieldData = {}
+    formFieldData = OrderedDict()
     for item in data:
         field_name, value = item[0], item[1]
         if field_name not in formFieldData or formFieldData[field_name] != value:
