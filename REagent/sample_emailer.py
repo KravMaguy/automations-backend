@@ -1,16 +1,19 @@
 import smtplib
 from email.mime.multipart import MIMEMultipart
 from email.mime.text import MIMEText
-# import os
+import os
+from dotenv import load_dotenv
+
+# Load environment variables from .env file
+load_dotenv()
 
 
 def send_email(subject, body, to_email):
     # Gmail credentials from environment variables
-    # username = os.getenv('GMAIL_USER')
-    # password = os.getenv('GMAIL_PASSWORD')
+    username = os.getenv('GMAIL_USER')
+    password = os.getenv('GMAIL_PASSWORD')
 
-    username = ''
-    password = ''
+    
     # Email content
     from_email = username
 
