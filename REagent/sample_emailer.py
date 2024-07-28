@@ -46,5 +46,5 @@ def send_email(subject, body, to_email):
 
 
 # Example usage
-send_email('Test Subject', 'This is the body of the email',
-           'toEmail@email.com')
+# send_email('Test Subject', 'This is the body of the email',
+#            'toEmail@email.com')

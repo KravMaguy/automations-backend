@@ -1,5 +1,8 @@
 import pandas as pd
-# import sample_emailer as se
+from sample_emailer import send_email
+import os
+
+
 file_path = 'Proxy.xlsx'
 excel_data = pd.ExcelFile(file_path)
 
@@ -17,6 +20,7 @@ for sheet_name in excel_data.sheet_names:
 
     # Dictionary to store column names found
     columns_found = {}
+    email_subject = os.getenv('SUBJECT')
 
     # Check for the existence of necessary columns in order to exectue program
     for key, pattern in column_patterns.items():
@@ -36,7 +40,11 @@ for sheet_name in excel_data.sheet_names:
         if missing_data:
             continue  # skip row with missing data
         print(row[list(columns_found.values())])
-        # se(row['SF Available'], row['Agent Name'],
-        #    row['Address'], row['Email'])
+
+        subject = row[columns_found['subject_column']]
+        body = f"Hello {row[columns_found['agent_name']]}, {email_subject} {row[columns_found['sf_available']]}?"
+        to_email = row[columns_found['email_column']]
+        
+        send_email(subject, body, to_email)
 
     print("-" * 40)
