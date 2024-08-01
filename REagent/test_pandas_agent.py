@@ -14,8 +14,9 @@ class TestPandasAgent(unittest.TestCase):
         excel_data = load_excel_data(file_path)
         sheet_data = excel_data.parse(excel_data.sheet_names[0])
 
-        # Run the processing function
-        process_sheet(sheet_data, subject_template, sender_email)
+        for sheet_name in excel_data.sheet_names:
+            sheet_data = excel_data.parse(sheet_name)
+            process_sheet(sheet_data, subject_template, sender_email)
 
         # Print debug info
         print("Captured calls:", mock_send_email.call_args_list)
