@@ -42,8 +42,7 @@ def process_sheet(sheet_data, subject_template, sender_email):
         to_email = row[columns_found['email_column']]
 
         # Send the email
-        # send_email(subject, body, to_email)
-        print(f"Email sent to {to_email} with subject '{subject}'")
+        send_email(subject, body, to_email)
 
 
 def main():

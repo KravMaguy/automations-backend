@@ -12,37 +12,37 @@ def send_email(subject, body, to_email):
     # Gmail credentials from environment variables
     username = os.getenv('GMAIL_USER')
     password = os.getenv('GMAIL_PASSWORD')
+    print("sending email to: ", to_email,
+          " with subject: ", subject, " and body: ", body)
+    # # Email content
+    # from_email = username
 
-    
-    # Email content
-    from_email = username
+    # # Create the email
+    # msg = MIMEMultipart()
+    # msg['From'] = from_email
+    # msg['To'] = to_email
+    # msg['Subject'] = subject
 
-    # Create the email
-    msg = MIMEMultipart()
-    msg['From'] = from_email
-    msg['To'] = to_email
-    msg['Subject'] = subject
+    # msg.attach(MIMEText(body, 'plain'))
 
-    msg.attach(MIMEText(body, 'plain'))
+    # try:
+    #     # Connect to the Gmail server
+    #     server = smtplib.SMTP('smtp.gmail.com', 587)
+    #     server.starttls()
 
-    try:
-        # Connect to the Gmail server
-        server = smtplib.SMTP('smtp.gmail.com', 587)
-        server.starttls()
+    #     # Login to your Gmail account
+    #     server.login(username, password)
 
-        # Login to your Gmail account
-        server.login(username, password)
+    #     # Send the email
+    #     server.sendmail(from_email, to_email, msg.as_string())
 
-        # Send the email
-        server.sendmail(from_email, to_email, msg.as_string())
+    #     # Disconnect from the server
+    #     server.quit()
 
-        # Disconnect from the server
-        server.quit()
+    #     print("Email sent successfully!")
 
-        print("Email sent successfully!")
-
-    except Exception as e:
-        print(f"Failed to send email: {e}")
+    # except Exception as e:
+    #     print(f"Failed to send email: {e}")
 
 
 # Example usage
