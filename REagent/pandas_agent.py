@@ -27,26 +27,33 @@ def process_sheet(sheet_data, subject_template, sender_email):
             raise ValueError(
                 f"Column matching '{pattern}' does not exist in the sheet.")
         columns_found[key] = matches[0]
+    # an adress field in the excel sheet CAN be empty if it is anything greater than the first row in the tab
+    # address passed as the subject to the mailer function should be the last exisitng adress
+    last_address = None
 
     for index, row in sheet_data.iterrows():
         missing_data = False
         for key in columns_found:
-            if pd.isna(row[columns_found[key]]):
+            if pd.isna(row[columns_found[key]]) and key != 'subject_column':
                 missing_data = True
                 break
         if missing_data:
             continue  # skip row with missing data
 
-        subject = row[columns_found['subject_column']]
+        if not pd.isna(row[columns_found['subject_column']]):
+            last_address = row[columns_found['subject_column']]
+
+        if last_address is None:
+            continue  # skip if there's no initial address
+
+        subject = last_address
         body = f"Hello {row[columns_found['agent_name']]}, {subject_template} {row[columns_found['sf_available']]}?"
         to_email = row[columns_found['email_column']]
 
-        # Send the email
         send_email(subject, body, to_email)
 
-
 def main():
-    file_path = 'Proxy.xlsx'
+    file_path = 'Copy_Proxy.xlsx'
     excel_data = load_excel_data(file_path)
     subject_template = os.getenv('SUBJECT')
     sender_email = os.getenv('SENDER_EMAIL')
