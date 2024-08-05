@@ -9,7 +9,7 @@ import io
 class SimpleUI(tk.Tk):
     def __init__(self):
         super().__init__()
-        self.title("Simple Desktop Application")
+        self.title("RE Agent Automator")
         self.geometry("800x400")
 
         left_frame = tk.Frame(self, width=400, height=400)
