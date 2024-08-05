@@ -2,13 +2,10 @@ import pandas as pd
 from sample_emailer import send_email
 import os
 
-
 def load_excel_data(file_path):
     return pd.ExcelFile(file_path)
 
-
 def process_sheet(sheet_data, subject_template, sender_email):
-    # Define the column patterns to search for
     column_patterns = {
         'sf_available': 'sf available',
         'agent_name': 'agent name',
@@ -16,19 +13,14 @@ def process_sheet(sheet_data, subject_template, sender_email):
         'email_column': 'email'
     }
 
-    # Dictionary to store column names found
     columns_found = {}
 
-    # Check for the existence of necessary columns in order to exectue program
     for key, pattern in column_patterns.items():
-        matches = sheet_data.columns[sheet_data.columns.str.contains(
-            pattern, case=False, na=False)]
+        matches = sheet_data.columns[sheet_data.columns.str.contains(pattern, case=False, na=False)]
         if matches.empty:
-            raise ValueError(
-                f"Column matching '{pattern}' does not exist in the sheet.")
+            raise ValueError(f"Column matching '{pattern}' does not exist in the sheet.")
         columns_found[key] = matches[0]
-    # an adress field in the excel sheet CAN be empty if it is anything greater than the first row in the tab
-    # address passed as the subject to the mailer function should be the last exisitng adress
+
     last_address = None
 
     for index, row in sheet_data.iterrows():
@@ -37,6 +29,7 @@ def process_sheet(sheet_data, subject_template, sender_email):
             if pd.isna(row[columns_found[key]]) and key != 'subject_column':
                 missing_data = True
                 break
+
         if missing_data:
             continue  # skip row with missing data
 
@@ -47,21 +40,24 @@ def process_sheet(sheet_data, subject_template, sender_email):
             continue  # skip if there's no initial address
 
         subject = last_address
-        body = f"Hello {row[columns_found['agent_name']]}, {subject_template} {row[columns_found['sf_available']]}?"
+        sqFtInt = int(row[columns_found['sf_available']])
+        body = f"Hello {row[columns_found['agent_name']]}, {subject_template} {sqFtInt}?"
         to_email = row[columns_found['email_column']]
 
         send_email(subject, body, to_email)
 
-def main():
-    file_path = 'Copy_Proxy.xlsx'
+def main(file_path):
     excel_data = load_excel_data(file_path)
     subject_template = os.getenv('SUBJECT')
     sender_email = os.getenv('SENDER_EMAIL')
 
     for sheet_name in excel_data.sheet_names:
-        sheet_data = excel_data.parse(sheet_name)
-        process_sheet(sheet_data, subject_template, sender_email)
-
+        try:
+            sheet_data = excel_data.parse(sheet_name)
+            print(f"Processing sheet '{sheet_name}'\n")
+            process_sheet(sheet_data, subject_template, sender_email)
+        except ValueError as e:
+            print(f"Error processing sheet '{sheet_name}': {e}")
 
 if __name__ == "__main__":
-    main()
+    main('Proxy.xlsx')  # Default value for testing

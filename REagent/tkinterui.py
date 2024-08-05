@@ -1,5 +1,10 @@
 import tkinter as tk
 from tkinter import filedialog, scrolledtext
+import subprocess
+import threading
+import pandas_agent
+import sys
+import io
 
 class SimpleUI(tk.Tk):
     def __init__(self):
@@ -24,10 +29,26 @@ class SimpleUI(tk.Tk):
 
     def upload_file(self):
         file_path = filedialog.askopenfilename()
+        #get filename from path
+        file_name = file_path.split("/")[-1]
         if file_path:
-            self.file_path_label.config(text=file_path)
-            # terminal output:
-            self.terminal_output.insert(tk.END, f"File uploaded: {file_path}\n")
+            self.file_path_label.config(text=file_name)
+            self.run_pandas_agent(file_path)
+
+    def run_pandas_agent(self, file_path):
+        def target():
+            # Redirect stdout to capture prints
+            old_stdout = sys.stdout
+            sys.stdout = buffer = io.StringIO()
+            try:
+                pandas_agent.main(file_path)
+                output = buffer.getvalue()
+            finally:
+                sys.stdout = old_stdout
+            self.terminal_output.insert(tk.END, output)
+        
+        thread = threading.Thread(target=target)
+        thread.start()
 
 if __name__ == "__main__":
     app = SimpleUI()

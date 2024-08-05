@@ -12,8 +12,8 @@ def send_email(subject, body, to_email):
     # Gmail credentials from environment variables
     username = os.getenv('GMAIL_USER')
     password = os.getenv('GMAIL_PASSWORD')
-    print("sending email to: ", to_email,
-          " with subject: ", subject, " and body: ", body)
+
+    print(f"sending email to: ", to_email, "\nsubject: ", subject, "\nbody: ", body, "\n")
     # # Email content
     # from_email = username
 
